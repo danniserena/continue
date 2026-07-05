@@ -5,6 +5,11 @@
 import { setupCa } from "core/util/ca";
 import * as vscode from "vscode";
 
+import {
+  logErrorToContinueOutput,
+  showContinueOutputChannel,
+} from "./util/outputChannel";
+
 export { default as buildTimestamp } from "./.buildTimestamp";
 
 async function dynamicImportAndActivate(context: vscode.ExtensionContext) {
@@ -16,6 +21,7 @@ async function dynamicImportAndActivate(context: vscode.ExtensionContext) {
 export function activate(context: vscode.ExtensionContext) {
   return dynamicImportAndActivate(context).catch((e) => {
     console.log("Error activating extension: ", e);
+    logErrorToContinueOutput("Error activating extension", e);
     vscode.window
       .showWarningMessage(
         "Error activating the Continue extension.",
@@ -24,7 +30,7 @@ export function activate(context: vscode.ExtensionContext) {
       )
       .then((selection) => {
         if (selection === "View Logs") {
-          vscode.commands.executeCommand("continue.viewLogs");
+          showContinueOutputChannel();
         } else if (selection === "Retry") {
           // Reload VS Code window
           vscode.commands.executeCommand("workbench.action.reloadWindow");

@@ -1,10 +1,14 @@
+import { GlobalContext } from "core/util/GlobalContext";
 import { getContinueRcPath, getTsConfigPath } from "core/util/paths";
 import * as vscode from "vscode";
 
 import { VsCodeExtension } from "../extension/VsCodeExtension";
+import {
+  logToContinueOutput,
+  registerContinueOutputChannel,
+} from "../util/outputChannel";
 import { isUnsupportedPlatform } from "../util/util";
 
-import { GlobalContext } from "core/util/GlobalContext";
 import { VsCodeContinueApi } from "./api";
 import setupInlineTips from "./InlineTipManager";
 
@@ -29,6 +33,10 @@ export async function activateExtension(context: vscode.ExtensionContext) {
   getContinueRcPath();
 
   // Register commands and providers
+  registerContinueOutputChannel(context);
+  logToContinueOutput(
+    `Continue extension activating, mode=${context.extensionMode}`,
+  );
   setupInlineTips(context);
 
   const vscodeExtension = new VsCodeExtension(context);
@@ -65,6 +73,7 @@ export async function activateExtension(context: vscode.ExtensionContext) {
   }
 
   const api = new VsCodeContinueApi(vscodeExtension);
+  logToContinueOutput("Continue extension activated");
   const continuePublicApi = {
     registerCustomContextProvider: api.registerCustomContextProvider.bind(api),
   };

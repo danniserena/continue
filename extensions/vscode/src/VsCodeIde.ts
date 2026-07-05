@@ -2,8 +2,8 @@ import * as child_process from "node:child_process";
 import { exec } from "node:child_process";
 
 import { Range } from "core";
-import { EXTENSION_NAME } from "core/util/constants";
 import { DEFAULT_IGNORES, defaultIgnoresGlob } from "core/indexing/ignore";
+import { EXTENSION_NAME } from "core/util/constants";
 import * as URI from "uri-js";
 import * as vscode from "vscode";
 
@@ -15,6 +15,10 @@ import {
 import { Repository } from "./otherExtensions/git";
 import { SecretStorage } from "./stubs/SecretStorage";
 import { VsCodeIdeUtils } from "./util/ideUtils";
+import {
+  logErrorToContinueOutput,
+  logToContinueOutput,
+} from "./util/outputChannel";
 import { getExtensionVersion, isExtensionPrerelease } from "./util/util";
 import { getExtensionUri, openEditorAndRevealRange } from "./util/vscode";
 import { VsCodeWebviewProtocol } from "./webviewProtocol";
@@ -404,6 +408,50 @@ class VsCodeIde implements IDE {
       const contents = new TextDecoder().decode(truncatedBytes);
       return contents;
     } catch (e) {
+      return "";
+    }
+  }
+
+  async readFileAsBase64(fileUri: string): Promise<string> {
+    try {
+      const uri = vscode.Uri.parse(fileUri);
+      logToContinueOutput(
+        `readFileAsBase64: input=${fileUri}, scheme=${uri.scheme}, fsPath=${uri.fsPath}`,
+      );
+
+      // Check whether it's an open document - can't get binary content from text document
+      const openTextDocument = vscode.workspace.textDocuments.find((doc) =>
+        URI.equal(doc.uri.toString(), uri.toString()),
+      );
+      if (openTextDocument !== undefined) {
+        // For text documents, convert text to base64
+        const text = openTextDocument.getText();
+        const base64 = Buffer.from(text, "utf-8").toString("base64");
+        logToContinueOutput(
+          `readFileAsBase64: read open text document, uri=${uri.toString()}, textLength=${text.length}, base64Length=${base64.length}`,
+        );
+        return base64;
+      }
+
+      // Read binary content from disk and convert to base64
+      const bytes = await this.ideUtils.readFile(uri);
+      if (bytes === null) {
+        logToContinueOutput(
+          `readFileAsBase64: failed to read bytes, uri=${uri.toString()}`,
+        );
+        return "";
+      }
+
+      const base64 = Buffer.from(bytes).toString("base64");
+      logToContinueOutput(
+        `readFileAsBase64: read bytes, uri=${uri.toString()}, byteLength=${bytes.length}, base64Length=${base64.length}`,
+      );
+      return base64;
+    } catch (e) {
+      logErrorToContinueOutput(
+        `readFileAsBase64: error reading input=${fileUri}`,
+        e,
+      );
       return "";
     }
   }
