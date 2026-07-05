@@ -876,6 +876,8 @@ export interface IDE {
 
   readFile(fileUri: string): Promise<string>;
 
+  readFileAsBase64(fileUri: string): Promise<string>;
+
   readRangeInFile(fileUri: string, range: Range): Promise<string>;
 
   showLines(fileUri: string, startLine: number, endLine: number): Promise<void>;

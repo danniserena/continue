@@ -137,6 +137,10 @@ export class ReverseMessageIde {
       return this.ide.readFile(data.filepath);
     });
 
+    this.on("readFileAsBase64", (data) => {
+      return this.ide.readFileAsBase64(data.filepath);
+    });
+
     this.on("getOpenFiles", () => {
       return this.ide.getOpenFiles();
     });

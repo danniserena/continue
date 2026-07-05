@@ -348,6 +348,9 @@ class IntelliJIDE(
     override suspend fun readFile(filepath: String): String =
         fileUtils.readFile(filepath)
 
+    override suspend fun readFileAsBase64(filepath: String): String =
+        fileUtils.readFileAsBase64(filepath)
+
     override suspend fun readRangeInFile(filepath: String, range: Range): String {
         val fullContents = readFile(filepath)
         val lines = fullContents.lines()

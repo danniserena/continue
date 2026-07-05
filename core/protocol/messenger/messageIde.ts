@@ -196,6 +196,10 @@ export class MessageIde implements IDE {
     return await this.request("readFile", { filepath: fileUri });
   }
 
+  async readFileAsBase64(fileUri: string): Promise<string> {
+    return await this.request("readFileAsBase64", { filepath: fileUri });
+  }
+
   getOpenFiles(): Promise<string[]> {
     return this.request("getOpenFiles", undefined);
   }

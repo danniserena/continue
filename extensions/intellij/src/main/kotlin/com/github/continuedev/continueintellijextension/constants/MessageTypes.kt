@@ -16,6 +16,7 @@ class MessageTypes {
             "runCommand",
             "saveFile",
             "readFile",
+            "readFileAsBase64",
             "showDiff",
             "getOpenFiles",
             "getCurrentFile",

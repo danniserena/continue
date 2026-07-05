@@ -367,6 +367,9 @@ export class VsCodeMessenger {
     this.onWebviewOrCore("readFile", async (msg) => {
       return await ide.readFile(msg.data.filepath);
     });
+    this.onWebviewOrCore("readFileAsBase64", async (msg) => {
+      return await ide.readFileAsBase64(msg.data.filepath);
+    });
     this.onWebviewOrCore("openUrl", (msg) => {
       vscode.env.openExternal(vscode.Uri.parse(msg.data));
     });
