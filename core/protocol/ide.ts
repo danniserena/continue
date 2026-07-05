@@ -34,6 +34,7 @@ export type ToIdeFromWebviewOrCoreProtocol = {
   saveFile: [{ filepath: string }, void];
   fileExists: [{ filepath: string }, boolean];
   readFile: [{ filepath: string }, string];
+  readFileAsBase64: [{ filepath: string }, string];
   getProblems: [{ filepath: string }, Problem[]];
   getOpenFiles: [undefined, string[]];
   getCurrentFile: [

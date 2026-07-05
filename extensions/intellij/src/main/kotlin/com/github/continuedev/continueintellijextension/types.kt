@@ -193,6 +193,8 @@ interface IDE {
 
     suspend fun readFile(filepath: String): String
 
+    suspend fun readFileAsBase64(filepath: String): String
+
     suspend fun readRangeInFile(filepath: String, range: Range): String
 
     suspend fun showLines(

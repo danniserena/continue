@@ -146,6 +146,15 @@ class IdeProtocolClient(
                         respond(contents)
                     }
 
+                    "readFileAsBase64" -> {
+                        val params = gsonService.gson.fromJson(
+                            dataElement.toString(),
+                            ReadFileParams::class.java
+                        )
+                        val contents = ide.readFileAsBase64(params.filepath)
+                        respond(contents)
+                    }
+
                     "readRangeInFile" -> {
                         val params = gsonService.gson.fromJson(
                             dataElement.toString(),

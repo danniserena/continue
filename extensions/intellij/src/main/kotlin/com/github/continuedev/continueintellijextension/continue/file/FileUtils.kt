@@ -13,6 +13,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import java.util.Base64
 import kotlin.math.min
 
 
@@ -66,6 +67,13 @@ class FileUtils(
             readDocument(found, maxLength) ?: VfsUtil.loadText(found, maxLength)
         }
         return normalizeLineEndings(text)
+    }
+
+    fun readFileAsBase64(fileUri: String): String {
+        val found = findFile(fileUri)
+            ?: return ""
+        val bytes = VfsUtil.loadBytes(found)
+        return Base64.getEncoder().encodeToString(bytes)
     }
 
     fun openFile(fileUri: String) {
